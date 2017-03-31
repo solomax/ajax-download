@@ -6,18 +6,26 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.AjaxDownload;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.resource.FileSystemResource;
+
+import com.googlecode.wicket.kendo.ui.KendoCultureHeaderItem;
+import com.googlecode.wicket.kendo.ui.form.datetime.local.DateTimePicker;
 
 public class HomePage extends WebPage {
 	private static final long serialVersionUID = 1L;
@@ -25,6 +33,7 @@ public class HomePage extends WebPage {
 
 	public HomePage(final PageParameters parameters) {
 		super(parameters);
+		WebSession.get().setLocale(new Locale.Builder().setLanguage("es").setRegion("CO").build());
 
 		add(new Label("version", getApplication().getFrameworkSettings().getVersion()));
 
@@ -67,6 +76,14 @@ public class HomePage extends WebPage {
 					protected void onError(AjaxRequestTarget target) {
 						target.add(feedback);
 					}
-				}));
+				}
+				, new DateTimePicker("dateTime", Model.of(LocalDateTime.now()), WebSession.get().getLocale()).setLabel(Model.of("Test DateTime"))
+			));
+	}
+
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		super.renderHead(response);
+		response.render(KendoCultureHeaderItem.of(WebSession.get().getLocale()));
 	}
 }
