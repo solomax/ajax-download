@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.resource.FileSystemResource;
 
 import com.googlecode.wicket.kendo.ui.KendoCultureHeaderItem;
@@ -37,12 +38,21 @@ public class HomePage extends WebPage {
 
 		add(new Label("version", getApplication().getFrameworkSettings().getVersion()));
 
-		final AjaxDownload download = new AjaxDownload(new FileSystemResource() {
+		final AjaxDownload download = new AjaxDownload(new IResource() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected ResourceResponse createResourceResponse(Path path) {
-				return super.createResourceResponse(zipFile.toPath());
+			public void respond(Attributes attributes) {
+				new FileSystemResource(zipFile.toPath()) {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					protected ResourceResponse createResourceResponse(Path path) {
+						ResourceResponse response = super.createResourceResponse(path);
+						response.setFileName("" + path.getFileName());
+						return response;
+					}
+				}.respond(attributes);
 			}
 		});
 		final FeedbackPanel feedback = new FeedbackPanel("feedback");
