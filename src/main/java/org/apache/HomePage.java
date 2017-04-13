@@ -24,6 +24,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.resource.FileSystemResource;
 
@@ -40,7 +41,7 @@ public class HomePage extends WebPage {
 
 		add(new Label("version", getApplication().getFrameworkSettings().getVersion()));
 
-		final AjaxDownload downloadBlob = new AjaxDownload(new IResource() {
+		final AjaxDownload download = new AjaxDownload(new IResource() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -49,33 +50,16 @@ public class HomePage extends WebPage {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					protected ResourceResponse createResourceResponse(Path path) {
-						ResourceResponse response = super.createResourceResponse(path);
-						response.setFileName("" + path.getFileName());
+					protected ResourceResponse createResourceResponse(Attributes attrs, Path path) {
+						ResourceResponse response = super.createResourceResponse(attrs, path);
+						response.setContentDisposition(ContentDisposition.ATTACHMENT);
 						return response;
 					}
 				}.respond(attributes);
 			}
 		});
-		final AjaxDownload downloadFrame = new AjaxDownload(new IResource() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void respond(Attributes attributes) {
-				new FileSystemResource(dwnldFile.toPath()) {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					protected ResourceResponse createResourceResponse(Path path) {
-						ResourceResponse response = super.createResourceResponse(path);
-						response.setFileName("" + path.getFileName());
-						return response;
-					}
-				}.respond(attributes);
-			}
-		}).setLocation(AjaxDownload.Location.IFrame);
 		final FeedbackPanel feedback = new FeedbackPanel("feedback");
-		add(downloadBlob, downloadFrame);
+		add(download);
 		add(new Form<Void>("form").add(
 				feedback.setOutputMarkupId(true)
 				, new AjaxButton("download-zip-blob") {
@@ -84,9 +68,9 @@ public class HomePage extends WebPage {
 					@Override
 					protected void onSubmit(AjaxRequestTarget target) {
 						createZip();
-						info("ZIP Blob, filename: " + dwnldFile.getName());
+						info("ZIP Blob, filename: " + dwnldFile.toPath().getFileName());
 						target.add(feedback);
-						downloadBlob.initiate(target);
+						download.setLocation(AjaxDownload.Location.Blob).initiate(target);
 					}
 
 					@Override
@@ -100,9 +84,9 @@ public class HomePage extends WebPage {
 					@Override
 					protected void onSubmit(AjaxRequestTarget target) {
 						createText();
-						info("Text Blob, filename: " + dwnldFile.getName());
+						info("Text Blob, filename: " + dwnldFile.toPath().getFileName());
 						target.add(feedback);
-						downloadBlob.initiate(target);
+						download.setLocation(AjaxDownload.Location.Blob).initiate(target);
 					}
 
 					@Override
@@ -116,9 +100,9 @@ public class HomePage extends WebPage {
 					@Override
 					protected void onSubmit(AjaxRequestTarget target) {
 						createZip();
-						info("ZIP iFrame, filename: " + dwnldFile.getName());
+						info("ZIP iFrame, filename: " + dwnldFile.toPath().getFileName());
 						target.add(feedback);
-						downloadFrame.initiate(target);
+						download.setLocation(AjaxDownload.Location.IFrame).initiate(target);
 					}
 
 					@Override
@@ -132,9 +116,9 @@ public class HomePage extends WebPage {
 					@Override
 					protected void onSubmit(AjaxRequestTarget target) {
 						createText();
-						info("Text iFrame, filename: " + dwnldFile.getName());
+						info("Text iFrame, filename: " + dwnldFile.toPath().getFileName());
 						target.add(feedback);
-						downloadFrame.initiate(target);
+						download.setLocation(AjaxDownload.Location.IFrame).initiate(target);
 					}
 
 					@Override
