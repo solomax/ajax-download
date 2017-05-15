@@ -8,39 +8,49 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.AjaxDownload;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.resource.FileSystemResource;
 
-import com.googlecode.wicket.kendo.ui.KendoCultureHeaderItem;
-import com.googlecode.wicket.kendo.ui.form.datetime.local.DateTimePicker;
-
 public class HomePage extends WebPage {
 	private static final long serialVersionUID = 1L;
 	private File dwnldFile;
+	WebMarkupContainer container = new WebMarkupContainer("container");
+	private final AbstractDefaultAjaxBehavior pageLoad = new AbstractDefaultAjaxBehavior() {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		protected void respond(AjaxRequestTarget target) {
+			target.add(container.replace(new WebSocketPanel("socketPanel")));
+		}
+	};
 
 	public HomePage(final PageParameters parameters) {
 		super(parameters);
 		WebSession.get().setLocale(new Locale.Builder().setLanguage("es").setRegion("CO").build());
 
+		add(pageLoad);
 		add(new Label("version", getApplication().getFrameworkSettings().getVersion()));
 
+		add(container.add(new EmptyPanel("socketPanel")).setOutputMarkupId(true));
 		final AjaxDownload download = new AjaxDownload(new IResource() {
 			private static final long serialVersionUID = 1L;
 
@@ -126,7 +136,6 @@ public class HomePage extends WebPage {
 						target.add(feedback);
 					}
 				}
-				, new DateTimePicker("dateTime", Model.of(LocalDateTime.now()), WebSession.get().getLocale()).setLabel(Model.of("Test DateTime"))
 			));
 	}
 
@@ -162,6 +171,6 @@ public class HomePage extends WebPage {
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
-		response.render(KendoCultureHeaderItem.of(WebSession.get().getLocale()));
+		response.render(OnDomReadyHeaderItem.forScript(pageLoad.getCallbackScript()));
 	}
 }
