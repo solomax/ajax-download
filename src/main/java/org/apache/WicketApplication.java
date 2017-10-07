@@ -1,8 +1,8 @@
 package org.apache;
 
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.protocol.http.CsrfPreventionRequestCycleListener;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.ws.WebSocketAwareCsrfPreventionRequestCycleListener;
 
 /**
  * Application object for your web application.
@@ -27,7 +27,7 @@ public class WicketApplication extends WebApplication
 	@Override
 	public void init()
 	{
-		getRequestCycleListeners().add(new CsrfPreventionRequestCycleListener());
+		getRequestCycleListeners().add(new WebSocketAwareCsrfPreventionRequestCycleListener());
 		super.init();
 
 		// add your configuration here

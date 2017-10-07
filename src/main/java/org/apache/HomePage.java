@@ -13,18 +13,21 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.AjaxDownload;
+import org.apache.wicket.extensions.ajax.AjaxDownloadBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.protocol.http.WebSession;
+import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.IResource;
@@ -51,7 +54,7 @@ public class HomePage extends WebPage {
 		add(new Label("version", getApplication().getFrameworkSettings().getVersion()));
 
 		add(container.add(new EmptyPanel("socketPanel")).setOutputMarkupId(true));
-		final AjaxDownload download = new AjaxDownload(new IResource() {
+		final AjaxDownloadBehavior download = new AjaxDownloadBehavior(new IResource() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -80,7 +83,7 @@ public class HomePage extends WebPage {
 						createZip();
 						info("ZIP Blob, filename: " + dwnldFile.toPath().getFileName());
 						target.add(feedback);
-						download.setLocation(AjaxDownload.Location.Blob).initiate(target);
+						download.setLocation(AjaxDownloadBehavior.Location.Blob).initiate(target);
 					}
 
 					@Override
@@ -96,7 +99,7 @@ public class HomePage extends WebPage {
 						createText();
 						info("Text Blob, filename: " + dwnldFile.toPath().getFileName());
 						target.add(feedback);
-						download.setLocation(AjaxDownload.Location.Blob).initiate(target);
+						download.setLocation(AjaxDownloadBehavior.Location.Blob).initiate(target);
 					}
 
 					@Override
@@ -112,7 +115,7 @@ public class HomePage extends WebPage {
 						createZip();
 						info("ZIP iFrame, filename: " + dwnldFile.toPath().getFileName());
 						target.add(feedback);
-						download.setLocation(AjaxDownload.Location.IFrame).initiate(target);
+						download.setLocation(AjaxDownloadBehavior.Location.IFrame).initiate(target);
 					}
 
 					@Override
@@ -128,7 +131,7 @@ public class HomePage extends WebPage {
 						createText();
 						info("Text iFrame, filename: " + dwnldFile.toPath().getFileName());
 						target.add(feedback);
-						download.setLocation(AjaxDownload.Location.IFrame).initiate(target);
+						download.setLocation(AjaxDownloadBehavior.Location.IFrame).initiate(target);
 					}
 
 					@Override
@@ -136,6 +139,15 @@ public class HomePage extends WebPage {
 						target.add(feedback);
 					}
 				}
+				, new Button("oauthBtn").add(new Label("label", "Redirect to Google"))
+					.add(new AjaxEventBehavior("click") {
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						protected void onEvent(AjaxRequestTarget target) {
+							throw new RedirectToUrlException("https://google.com");
+						}
+					})
 			));
 	}
 
