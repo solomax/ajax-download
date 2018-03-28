@@ -29,7 +29,6 @@ public class WicketApplication extends WebApplication
 	{
 		getRequestCycleListeners().add(new WebSocketAwareCsrfPreventionRequestCycleListener());
 		super.init();
-
-		// add your configuration here
+		mountPage("csstest", CssTestPage.class);
 	}
 }
