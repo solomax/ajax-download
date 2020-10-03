@@ -33,7 +33,7 @@ public class CssTestPage extends WebPage {
 						@Override
 						public void renderHead(Component component, IHeaderResponse response) {
 							super.renderHead(component, response);
-							response.render(new CssContentHeaderItem(HEAD_TEXT, "mystyle", null));
+							response.render(new CssContentHeaderItem(HEAD_TEXT, "mystyle"));
 						}
 					}));
 				}

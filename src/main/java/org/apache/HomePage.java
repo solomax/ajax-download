@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -32,7 +33,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.resource.FileSystemResource;
-import org.apache.wicket.util.time.Duration;
 
 public class HomePage extends WebPage {
 	private static final long serialVersionUID = 1L;
@@ -67,7 +67,7 @@ public class HomePage extends WebPage {
 					protected ResourceResponse createResourceResponse(Attributes attrs, Path path) {
 						ResourceResponse response = super.createResourceResponse(attrs, path);
 						response.setContentDisposition(ContentDisposition.ATTACHMENT);
-						response.setCacheDuration(Duration.NONE);
+						response.setCacheDuration(Duration.ZERO);
 						return response;
 					}
 				}.respond(attributes);

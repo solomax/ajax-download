@@ -41,10 +41,10 @@
 		</license>
 	</licenses>
 	<properties>
-		<wicket.version>8.0.0-SNAPSHOT</wicket.version>
-		<jetty9.version>9.4.7.v20170914</jetty9.version>
-		<log4j.version>2.8.1</log4j.version>
-		<junit.version>4.12</junit.version>
+		<wicket.version>9.1.0</wicket.version>
+		<jetty9.version>9.4.32.v20200930</jetty9.version>
+		<log4j.version>2.13.3</log4j.version>
+		<junit.version>5.7.0</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
 		<wtp.version>none</wtp.version>
@@ -81,8 +81,8 @@
 
 		<!--  JUNIT DEPENDENCY FOR TESTING -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
