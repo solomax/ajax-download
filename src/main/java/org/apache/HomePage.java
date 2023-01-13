@@ -34,6 +34,8 @@ import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.resource.FileSystemResource;
 
+import jakarta.inject.Inject;
+
 public class HomePage extends WebPage {
 	private static final long serialVersionUID = 1L;
 	private File dwnldFile;
@@ -46,6 +48,9 @@ public class HomePage extends WebPage {
 			target.add(container.replace(new WebSocketPanel("socketPanel")));
 		}
 	};
+
+	@Inject
+	private ComponentBean1 bean1;
 
 	public HomePage(final PageParameters parameters) {
 		super(parameters);
@@ -150,6 +155,36 @@ public class HomePage extends WebPage {
 							throw new RedirectToUrlException("https://google.com");
 						}
 					})
+				, new AjaxButton("spring-pprivate") {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					protected void onSubmit(AjaxRequestTarget target) {
+						bean1.nonPublic();
+						info("Bean1 package private method");
+						target.add(feedback);
+					}
+
+					@Override
+					protected void onError(AjaxRequestTarget target) {
+						target.add(feedback);
+					}
+				}
+				, new AjaxButton("spring-public") {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					protected void onSubmit(AjaxRequestTarget target) {
+						bean1.nonPrivate();
+						info("Bean1 public method");
+						target.add(feedback);
+					}
+
+					@Override
+					protected void onError(AjaxRequestTarget target) {
+						target.add(feedback);
+					}
+				}
 			));
 	}
 

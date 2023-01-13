@@ -41,13 +41,19 @@
 		</license>
 	</licenses>
 	<properties>
-		<wicket.version>9.1.0</wicket.version>
-		<jetty9.version>9.4.32.v20200930</jetty9.version>
-		<log4j.version>2.13.3</log4j.version>
-		<junit.version>5.7.0</junit.version>
+		<jdk.version>17</jdk.version>
+
+		<wicket.version>10.0.0-M1-SNAPSHOT</wicket.version>
+		<jetty.version>11.0.13</jetty.version>
+		<spring.version>6.0.3</spring.version>
+		<junit.version>5.9.1</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<slf4j.version>2.0.6</slf4j.version>
+		<logback.version>1.4.5</logback.version>
 		<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
 		<wtp.version>none</wtp.version>
+		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
 	</properties>
 	<dependencies>
 		<!--  WICKET DEPENDENCIES -->
@@ -63,20 +69,28 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-ioc</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-native-websocket-javax</artifactId>
 			<version>${wicket.version}</version>
 		</dependency>
-
-		<!-- LOGGING DEPENDENCIES - LOG4J -->
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>${log4j.version}</version>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-spring</artifactId>
+			<version>${wicket.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4j.version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 
 		<!--  JUNIT DEPENDENCY FOR TESTING -->
@@ -87,13 +101,27 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+
 		<!--  JETTY DEPENDENCIES FOR TESTING  -->
 		<dependency>
-			<groupId>org.eclipse.jetty.aggregate</groupId>
-			<artifactId>jetty-all</artifactId>
-			<version>${jetty9.version}</version>
-			<classifier>uber</classifier>
-			<scope>test</scope>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -134,10 +162,10 @@
 				<inherited>true</inherited>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
 					<encoding>UTF-8</encoding>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
@@ -146,7 +174,7 @@
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>${jetty9.version}</version>
+				<version>${jetty.version}</version>
 				<configuration>
 					<systemProperties>
 						<systemProperty>
